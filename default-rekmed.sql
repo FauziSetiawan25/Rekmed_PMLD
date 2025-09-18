@@ -584,6 +584,7 @@ CREATE TABLE `pasien` (
   `modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `user_input` varchar(100) DEFAULT NULL,
   `user_modified` varchar(100) DEFAULT NULL,
+  `no_nik` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`mr`),
   KEY `pasien_klinik_fk` (`klinik_id`),
   CONSTRAINT `pasien_klinik_fk` FOREIGN KEY (`klinik_id`) REFERENCES `klinik` (`klinik_id`)
@@ -1307,3 +1308,4 @@ UNLOCK TABLES;
 -- Dump completed on 2023-10-14 22:57:29
 
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY', ''));
+user
