@@ -135,7 +135,7 @@ Modal::begin([
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger btn-rounded" data-dismiss="modal">Batal</button>
+    <button type="button" class="btn btn-secondary btn-rounded" data-dismiss="modal">Batal</button>
     <button type="button" class="btn btn-primary btn-rounded" id="simpan-ruangan">Simpan</button>
 </div>
 <?php
@@ -216,8 +216,8 @@ Modal::begin([
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger btn-rounded" data-dismiss="modal">Batal</button>
-    <button type="button" class="btn btn-primary btn-rounded" id="simpan-edit-ruangan">Simpan</button>
+    <button type="button" class="btn btn-secondary btn-rounded" data-dismiss="modal">Batal</button>
+    <button type="button" class="btn btn-primary btn-rounded" id="simpan-edit-kamar">Simpan</button>
 </div>
 <?php
 Modal::end();
@@ -235,14 +235,14 @@ $('.btn-edit-ruangan').on('click', function() {
     $('#edit-kuota-bed').val(kuota);
 
     // Simpan ID ruangan di atribut data
-    $('#simpan-edit-ruangan').data('id', id);
+    $('#simpan-edit-kamar').data('id', id);
 
     // Tampilkan modal
     $('#modal-edit-ruangan').modal('show');
 });
 
 // Simpan perubahan data ruangan
-$('#simpan-edit-ruangan').on('click', function() {
+$('#simpan-edit-kamar').on('click', function() {
     var id = $(this).data('id');
     var namaRuangan = $('#edit-nama-ruangan').val();
     var kuotaBed = $('#edit-kuota-bed').val();

@@ -1,9 +1,7 @@
 <?php
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
 use yii\bootstrap\Modal;
-use yii\widgets\ActiveForm;
 
 $this->title = 'CATATAN PERKEMBANGAN PASIEN TERINTEGRASI (CPPT) RAWAT INAP';
 $this->params['breadcrumbs'][] = ['label' => 'Manajemen', 'url' => ['#']];
@@ -12,30 +10,16 @@ $this->params['breadcrumbs'][] = 'CPPT';
 
 // Dummy data pasien
 $pasien = [
-    'no_rm' => 'RM001234',
-    'tanggal_lahir' => '1990-02-14',
-    'nama' => 'Budi Santoso',
+    'no_rm' => '289200001',
+    'tanggal_lahir' => '04-September-2025',
+    'nama' => 'Pasien Dummy',
     'jenis_kelamin' => 'L',
 ];
 
-// Dummy data CPPT
+// Dummy data perkembangan CPPT
 $cpptData = [
-    [
-        'tanggal' => '2025-09-24 08:15',
-        'profesi' => 'Dokter',
-        'subjektif' => 'Keluhan pusing sejak kemarin',
-        'planning' => 'Observasi + cairan infus',
-        'obat' => 'Paracetamol 500mg',
-        'verifikator' => 'dr. Sinta',
-    ],
-    [
-        'tanggal' => '2025-09-24 13:45',
-        'profesi' => 'Perawat',
-        'subjektif' => 'Pasien tampak lemas',
-        'planning' => 'Monitoring tekanan darah',
-        'obat' => '-',
-        'verifikator' => 'Ns. Andi',
-    ],
+    ['tanggal' => '24-09-2025 08:30', 'profesi' => 'Dokter', 'subjektif' => 'Pasien sadar, TD normal', 'planning' => 'Observasi 24 jam', 'obat' => 'Paracetamol', 'verifikator' => 'dr. Andi'],
+    ['tanggal' => '24-09-2025 12:00', 'profesi' => 'Perawat', 'subjektif' => 'Obat diberikan sesuai resep', 'planning' => '-', 'obat' => 'Paracetamol', 'verifikator' => 'Suster Budi'],
 ];
 
 $dataProvider = new ArrayDataProvider([
@@ -45,46 +29,22 @@ $dataProvider = new ArrayDataProvider([
     ],
 ]);
 
-// CSS untuk button rounded dan modal custom
+// CSS untuk button rounded
 $this->registerCss("
-    .btn-rounded {
-        border-radius: 10px !important;
-    }
-    .modal-confirm {
+    .table-header-custom {
+        background-color: #f8f9fa;
+        font-weight: bold;
         text-align: center;
     }
-    .modal-confirm .modal-header {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-    .modal-confirm .modal-body {
-        padding-top: 0;
-    }
-    .modal-confirm .btn-container {
-        margin-top: 20px;
-    }
-    .modal-confirm .btn-modal {
-        margin: 0 5px;
-        min-width: 80px;
-    }
-");
 
-// JavaScript untuk modal cetak
-$this->registerJs("
-    function showPrintConfirmation() {
-        $('#printConfirmationModal').modal('show');
+    .table-filter-custom input {
+        border-radius: 5px;
+        font-size: 12px;
+        padding: 5px;
     }
-    
-    function processPrint() {
-        // Simulasi proses cetak
-        $('#printConfirmationModal').modal('hide');
-        
-        // Tampilkan modal hasil (berhasil/gagal)
-        setTimeout(function() {
-            // Untuk simulasi, kita asumsikan berhasil
-            // Ganti dengan $('#printFailedModal').modal('show'); untuk simulasi gagal
-            $('#printSuccessModal').modal('show');
-        }, 500);
+
+    .btn-rounded {
+        border-radius: 10px !important;
     }
 ");
 ?>
@@ -117,143 +77,247 @@ $this->registerJs("
         <?= Html::a('Pasien Selesai', ['#'], ['class' => 'btn btn-danger btn-rounded']) ?>
     </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute' => 'tanggal',
-                'label' => 'Tanggal dan Jam',
-            ],
-            'profesi',
-            [
-                'attribute' => 'subjektif',
-                'label' => 'Subjektif, Objektif, Asesmen',
-            ],
-            'planning',
-            'obat',
-            [
-                'attribute' => 'verifikator',
-                'label' => 'Verifikator Tanda Tangan',
-            ],
-        ],
-    ]); ?>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr class="table-header-custom">
+                    <th>#</th>
+                    <th>Tanggal dan Jam</th>
+                    <th>Profesi</th>
+                    <th>Subjektif, Objektif, Asesmen</th>
+                    <th>Planning</th>
+                    <th>Obat</th>
+                    <th>Verifikator Tanda Tangan</th>
+                </tr>
+                <!-- Row untuk filter -->
+                <tr class="table-filter-custom">
+                    <td></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Tanggal"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Profesi"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Subjektif"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Planning"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Obat"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Verifikator"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($dataProvider->getModels() as $index => $model): ?>
+                    <tr>
+                        <td><?= $dataProvider->pagination->offset + $index + 1 ?></td>
+                        <td><?= Html::encode($model['tanggal']) ?></td>
+                        <td><?= Html::encode($model['profesi']) ?></td>
+                        <td><?= Html::encode($model['subjektif']) ?></td>
+                        <td><?= Html::encode($model['planning']) ?></td>
+                        <td><?= Html::encode($model['obat']) ?></td>
+                        <td><?= Html::encode($model['verifikator']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="text-center">
+            <?= \yii\widgets\LinkPager::widget([
+                'pagination' => $dataProvider->pagination,
+            ]) ?>
+        </div>
+    </div>
 </div>
 
 <?php
-// Modal Tambah CPPT
+// Modal form input CPPT
 Modal::begin([
     'id' => 'cpptModal',
-    'header' => '<h4><b>Tambah Perkembangan CPPT (Dummy)</b></h4>',
+    'header' => '<h4><b>Tambah Perkembangan CPPT</b></h4>',
 ]);
 ?>
 
 <form id="form-cppt-dummy">
     <div class="form-group">
         <label>Profesi</label>
-        <input type="text" class="form-control" placeholder="Contoh: Dokter / Perawat">
+        <input type="text" id="profesi" class="form-control">
     </div>
     <div class="form-group">
-        <label>Subjektif / Objektif / Asesmen</label>
-        <textarea class="form-control" rows="3"></textarea>
+        <label>Subjektif</label>
+        <textarea id="subjektif" class="form-control"></textarea>
     </div>
     <div class="form-group">
         <label>Planning</label>
-        <textarea class="form-control" rows="2"></textarea>
+        <textarea id="planning" class="form-control"></textarea>
     </div>
     <div class="form-group">
         <label>Obat</label>
-        <textarea class="form-control" rows="2"></textarea>
+        <textarea id="obat" class="form-control"></textarea>
     </div>
     <div class="form-group">
         <label>Verifikator</label>
-        <input type="text" class="form-control" placeholder="Nama verifikator">
+        <input type="text" id="verifikator" class="form-control">
     </div>
 
     <div class="form-group text-right">
-        <button type="button" class="btn btn-default btn-rounded" data-dismiss="modal">Batal</button>
-        <button type="button" class="btn btn-danger btn-rounded" data-dismiss="modal">Simpan (Dummy)</button>
+        <?= Html::button('Batal', [
+            'class' => 'btn btn-default btn-rounded',
+            'data-dismiss' => 'modal'
+        ]) ?>
+        <?= Html::button('Simpan', [
+            'class' => 'btn btn-danger btn-rounded',
+            'id' => 'btnSaveCppt'
+        ]) ?>
     </div>
 </form>
 
 <?php Modal::end(); ?>
 
 <?php
-// Modal Konfirmasi Cetak
-Modal::begin([
-    'id' => 'printConfirmationModal',
-    'header' => false,
-    'options' => ['class' => 'modal-confirm']
-]);
+$this->registerJs("
+    // Simpan data CPPT
+    $('#btnSaveCppt').on('click', function() {
+        var profesi = $('#profesi').val();
+        var subjektif = $('#subjektif').val();
+        var planning = $('#planning').val();
+        var obat = $('#obat').val();
+        var verifikator = $('#verifikator').val();
+
+        // Validasi sederhana
+        if (!profesi || !subjektif || !planning || !obat || !verifikator) {
+            Swal.fire({
+                title: 'Penambahan Data CPPT Gagal!',
+                text: 'Harap lengkapi semua field!',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: 'red'
+            });
+            return;
+        }
+
+        // Simulasi penyimpanan data
+        var isSuccess = true; // Ganti dengan hasil dari server
+
+        if (isSuccess) {
+            Swal.fire({
+                title: 'Penambahan Data CPPT Berhasil!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: 'green'
+            });
+
+            // Reset form dan tutup modal
+            $('#form-cppt-dummy')[0].reset();
+            $('#cpptModal').modal('hide');
+        } else {
+            Swal.fire({
+                title: 'Penambahan Data CPPT Gagal!',
+                text: 'Terjadi kesalahan saat menyimpan data.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: 'red'
+            });
+        }
+    });
+
+    // Konfirmasi cetak CPPT
+    function showPrintConfirmation() {
+        Swal.fire({
+            title: 'CETAK CPPT',
+            text: 'Apakah Anda ingin mencetak Catatan Perkembangan Pasien Terintegrasi?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Cetak',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            customClass: {
+                confirmButton: 'btn btn-info btn-rounded',
+                cancelButton: 'btn btn-danger btn-rounded'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Simulasi hasil cetak
+                var isSuccess = true; // Ganti dengan hasil dari server atau logika cetak
+
+                if (isSuccess) {
+                    Swal.fire({
+                        title: 'Cetak CPPT Berhasil!',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: 'green',
+                        customClass: {
+                            confirmButton: 'btn btn-info btn-rounded'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Cetak CPPT Gagal!',
+                        text: 'Terjadi kesalahan saat mencetak.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: 'red',
+                        customClass: {
+                            confirmButton: 'btn btn-danger btn-rounded'
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // Konfirmasi pasien selesai
+    function showFinishConfirmation() {
+        Swal.fire({
+            title: 'Konfirmasi Pasien Selesai Rawat Inap',
+            text: 'Apakah Anda ingin menyelesaikan masa rawat inap pasien?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            customClass: {
+                confirmButton: 'btn btn-danger btn-rounded',
+                cancelButton: 'btn btn-info btn-rounded'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Simulasi hasil penyelesaian pasien
+                var isSuccess = true; // Ganti dengan hasil dari server atau logika penyelesaian
+
+                if (isSuccess) {
+                    Swal.fire({
+                        title: 'Pasien Berhasil Selesai Rawat Inap!',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6',
+                        customClass: {
+                            confirmButton: 'btn btn-info btn-rounded'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Pasien Gagal Selesai Rawat Inap!',
+                        text: 'Terjadi kesalahan saat menyelesaikan masa rawat inap pasien.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33',
+                        customClass: {
+                            confirmButton: 'btn btn-danger btn-rounded'
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // Bind tombol cetak CPPT
+    $('.btn-info').on('click', function() {
+        showPrintConfirmation();
+    });
+
+    // Bind tombol pasien selesai
+    $('.btn-danger').on('click', function(e) {
+        e.preventDefault(); // Mencegah aksi default tombol
+        showFinishConfirmation();
+    });
+");
 ?>
 
-<div style="padding: 20px;">
-    <h4><b>Konfirmasi Cetak ...</b></h4>
-    <div class="modal-body">
-        <p style="margin-bottom: 10px;"><b>Apakah Anda Ingin Mencetak</b></p>
-        <p style="margin-bottom: 20px;">Catatan Perkembangan Pasien Terintegrasi ?</p>
-        
-        <div class="btn-container">
-            <?= Html::button('Batal', [
-                'class' => 'btn btn-default btn-rounded btn-modal',
-                'data-dismiss' => 'modal'
-            ]) ?>
-            <?= Html::button('Cetak', [
-                'class' => 'btn btn-info btn-rounded btn-modal',
-                'onclick' => 'processPrint()'
-            ]) ?>
-        </div>
-    </div>
-</div>
-
-<?php Modal::end(); ?>
-
-<?php
-// Modal Cetak Berhasil
-Modal::begin([
-    'id' => 'printSuccessModal',
-    'header' => false,
-    'options' => ['class' => 'modal-confirm']
-]);
-?>
-
-<div style="padding: 20px;">
-    <h4><b>Konfirmasi Cetak ...</b></h4>
-    <div class="modal-body">
-        <p style="color: green; font-weight: bold; margin: 20px 0;">Cetak CPPT Berhasil !</p>
-        
-        <div class="btn-container">
-            <?= Html::button('OK', [
-                'class' => 'btn btn-info btn-rounded btn-modal',
-                'data-dismiss' => 'modal'
-            ]) ?>
-        </div>
-    </div>
-</div>
-
-<?php Modal::end(); ?>
-
-<?php
-// Modal Cetak Gagal
-Modal::begin([
-    'id' => 'printFailedModal',
-    'header' => false,
-    'options' => ['class' => 'modal-confirm']
-]);
-?>
-
-<div style="padding: 20px;">
-    <h4><b>Konfirmasi Cetak ...</b></h4>
-    <div class="modal-body">
-        <p style="color: red; font-weight: bold; margin: 20px 0;">Cetak CPPT Gagal !</p>
-        
-        <div class="btn-container">
-            <?= Html::button('OK', [
-                'class' => 'btn btn-info btn-rounded btn-modal',
-                'data-dismiss' => 'modal'
-            ]) ?>
-        </div>
-    </div>
-</div>
-
-<?php Modal::end(); ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

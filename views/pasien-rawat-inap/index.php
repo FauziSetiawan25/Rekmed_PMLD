@@ -55,7 +55,7 @@ $dataProvider = new ArrayDataProvider([
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead>
-                <tr>
+                <tr class="table-header-custom">
                     <th>#</th>
                     <th>No Rekam Medis</th>
                     <th>Nama Pasien</th>
@@ -65,15 +65,15 @@ $dataProvider = new ArrayDataProvider([
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
-                <!-- Row untuk filter (slicing manual) -->
-                <tr>
+                <!-- Row untuk filter -->
+                <tr class="table-filter-custom">
                     <td></td>
-                    <td><input type="text" class="form-control" placeholder=""></td>
-                    <td><input type="text" class="form-control" placeholder=""></td>
-                    <td><input type="text" class="form-control" placeholder=""></td>
-                    <td><input type="text" class="form-control" placeholder=""></td>
-                    <td><input type="text" class="form-control" placeholder=""></td>
-                    <td><input type="text" class="form-control" placeholder=""></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter No RM"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Nama"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Ruangan"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Bed"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Penanggung"></td>
+                    <td><input type="text" class="form-control form-control-sm" placeholder="Filter Status"></td>
                     <td></td>
                 </tr>
             </thead>
@@ -88,19 +88,17 @@ $dataProvider = new ArrayDataProvider([
                         <td><?= $model['penanggung'] ?></td>
                         <td><?= $model['status'] ?></td>
                         <td>
-                            <td>
-                         <?= Html::a('LIHAT CPPT', ['pasien-rawat-inap/cppt', 'id' => $model['mr']], [
-                              'class' => 'btn btn-default',
-                              'style' => 'width:100px'
-                         ]) ?>
-                         </td>
+                            <?= Html::a('LIHAT CPPT', ['pasien-rawat-inap/cppt', 'id' => $model['mr']], [
+                                'class' => 'btn btn-primary btn-rounded',
+                                'style' => 'width:100px'
+                            ]) ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
 
-        <!-- Pagination manual -->
+        <!-- Pagination -->
         <div class="text-center">
             <?= \yii\widgets\LinkPager::widget([
                 'pagination' => $dataProvider->pagination,
@@ -108,3 +106,26 @@ $dataProvider = new ArrayDataProvider([
         </div>
     </div>
 </div>
+
+<?php
+// Tambahkan CSS untuk styling tabel agar mirip dengan ruangan/index.php
+$css = <<<CSS
+.table-header-custom {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-align: center;
+}
+
+.table-filter-custom input {
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 5px;
+}
+
+.btn-rounded {
+    border-radius: 10px !important;
+}
+CSS;
+
+$this->registerCss($css);
+?>
