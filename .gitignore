@@ -36,3 +36,9 @@ tests/_support/_generated
 /.vagrant
 
 /web/assets/
+
+# Koneksi DB
+/config/db.php
+
+# Catatan
+catatan.txt
