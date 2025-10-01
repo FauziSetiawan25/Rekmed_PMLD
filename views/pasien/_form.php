@@ -46,7 +46,9 @@ $model_kunjungan = new Kunjungan();
 
     <?= $form->field($model, 'no_telp')->textInput(['maxlength' => true]) ?>
 
+    <?php /*
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+    */ ?>
 
     <?= $form->field($model, 'pekerjaan')->textInput(['maxlength' => true]) ?>
 

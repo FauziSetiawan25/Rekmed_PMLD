@@ -46,6 +46,7 @@ class MetronicAsset extends AssetBundle
         'metronic/layouts/global/scripts/quick-sidebar.min.js'
     ];
     public $depends = [
+        'yii\web\JqueryAsset',
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
